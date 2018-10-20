@@ -18,6 +18,9 @@ function buildAddOn(e) {
     var message = GmailApp.getMessageById(messageId);
     var subject = message.getSubject();
     var sender = message.getFrom();
+  
+    var body = message.getBody();
+    var tasks = body.match(/T\d\d\d+/g);
 
     // Create a card with a single card section and two widgets.
     // Be sure to execute build() to finalize the card construction.
@@ -26,7 +29,7 @@ function buildAddOn(e) {
             .setTitle('Phabricator'))
         .addSection(CardService.newCardSection()
              .addWidget(CardService.newTextParagraph()
-                        .setText("<a href='https://team.webalo.net'>T1876</a>")))       
+                        .setText("<a href='https://team.webalo.net'></a>" + tasks)))       
         .build();   // Don't forget to build the Card!
     return [exampleCard];
 }
