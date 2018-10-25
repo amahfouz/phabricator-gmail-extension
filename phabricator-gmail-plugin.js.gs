@@ -1,5 +1,3 @@
-var PHAB_URL_PROPERTY_KEY="phab_url_key";
-var ACCESS_TOKEN_PROPERTY_KEY="access_token_key";
 
 /**
  * Returns the array of cards that should be rendered for the current
@@ -59,46 +57,6 @@ function connectionWasEstablished() {
      .getProperty(PHAB_URL_PROPERTY_KEY);
 }
 
-function buildConnectionCard() {
-  var card = CardService.newCardBuilder();
-  var header = CardService.newCardHeader();
-
-  card.setHeader(header.setTitle("Connect to Phabricator"));
-
-  var section = CardService.newCardSection();
-  section.addWidget
-      (CardService.newTextParagraph().setText
-       ("Enter <b>URL</b> for your Phabricator server and"
-        + " the <b>API token</b> to use when talking to it"));
-  
-  var phabAddress = CardService.newTextInput()
-    .setFieldName(PHAB_URL_PROPERTY_KEY)
-    .setTitle("Phabricator URL")
-    .setHint("https://phabricator.example.com");  
-
-  phabAddress.setOnChangeAction(CardService.newAction()
-        .setFunctionName("handlePhabUrlChanged"));
-  
-  section.addWidget(phabAddress);
-  
-  var accessToken = CardService.newTextInput()
-    .setFieldName(ACCESS_TOKEN_PROPERTY_KEY)
-    .setTitle("API Access Token")
-    .setHint("api-fdlbq35nted63kbcxr2wq26bxfvo");    
-  
-  section.addWidget(accessToken);
-  
-  card.addSection(section);
-  return card.build();
-}
-
-// See https://developers.google.com/gmail/add-ons/concepts/actions#action_event_objects
-function handlePhabUrlChanged(event) {
-  var phabUrlTextValue = event.formInput[PHAB_URL_PROPERTY_KEY];
-  Logger.log(phabUrlTextValue);
-  PropertiesService.getScriptProperties()
-     .setProperty(PHAB_URL_PROPERTY_KEY, phabUrlTextValue);
-}
 
 /**
  *  Builds a card to display information about a Phabricator task.
@@ -116,29 +74,4 @@ function buildTaskCard(taskId) {
 
   card.addSection(section);
   return card.build();
-}
-
-/**
- * Queries Phabricator for the specified task.
- */
-function getTaskInfo(taskId) {
-  var token = "api-fdlbq45nred63kacxr2wq26bxfoo";
-//  var url = "https://team.webalo.net/api/maniphest.info"
-//  + " -d api.token=" + token
-//  + " -d task_id=1838";
-  
-  var url = "https://team.webalo.net/api/maniphest.info"
-  var formData = {
-    'api.token': token,
-    'task_id'  : taskId
-  };
-  var options = {
-    'method' : 'post',
-    'payload' : formData
-  };
-  var response = UrlFetchApp.fetch(url, options);
-  Logger.log(response.getContentText());
-  var json = JSON.parse(response.getContentText());
-  
-  return json.result.title;
 }
