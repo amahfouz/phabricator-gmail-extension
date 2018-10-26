@@ -20,7 +20,7 @@ function getTaskInfo(taskId) {
      .getProperty(ACCESS_TOKEN_PROPERTY_KEY);
   var base = PropertiesService.getScriptProperties()
      .getProperty(PHAB_URL_PROPERTY_KEY);
-  var url = base + "api/maniphest.info"
+  var url = base + "/api/maniphest.info"
   
   var formData = {
     'api.token': token,

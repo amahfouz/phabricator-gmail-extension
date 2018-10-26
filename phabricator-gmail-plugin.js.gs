@@ -10,13 +10,13 @@
  */
 function buildAddOn(e) {
   
-  Logger.log("Add-on invoked.");
+    Logger.log("Add-on invoked.");
   
-  // if no connection has been established before then prompt
-  // the user to configure the connection to Phabricator  
-  if (! connectionWasEstablished()) {
-    return buildConnectionCard();
-  }
+    // if no connection has been established before then prompt
+    // the user to configure the connection to Phabricator  
+    if (! getPhabBaseUrl()) {
+       return buildConnectionCard();
+    }
   
     // message metadata to be read.
     var accessToken = e.messageMetadata.accessToken;
@@ -52,12 +52,6 @@ function buildAddOn(e) {
     return cards;
 }
 
-function connectionWasEstablished() {
-  return PropertiesService.getScriptProperties()
-     .getProperty(PHAB_URL_PROPERTY_KEY);
-}
-
-
 /**
  *  Builds a card to display information about a Phabricator task.
  *
@@ -69,9 +63,16 @@ function buildTaskCard(taskId) {
   card.setHeader(CardService.newCardHeader().setTitle(taskId));
 
   var section = CardService.newCardSection();
+  
+  var linkText = getTaskInfo(taskId.slice(1));
+  var linkHtml = createLinkToTask(taskId, linkText);
   section.addWidget(CardService.newTextParagraph()
-                       .setText(getTaskInfo(taskId.slice(1))));
+                       .setText(linkHtml));
 
   card.addSection(section);
   return card.build();
+}
+
+function createLinkToTask(taskId, title) {
+   return "<a href='" + getPhabBaseUrl() + "/" + taskId + "'>" + title + "</a>";
 }

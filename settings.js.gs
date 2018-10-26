@@ -53,6 +53,11 @@ function buildConnectionCard() {
   return card.build();
 }
 
+function getPhabBaseUrl() {
+  return PropertiesService.getScriptProperties()
+     .getProperty(PHAB_URL_PROPERTY_KEY);  
+}
+
 //
 // Event handlers
 // 
