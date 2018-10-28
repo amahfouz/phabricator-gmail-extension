@@ -99,8 +99,6 @@ function handleTestConnection(event) {
           .setType(notificationType)
           .setText(textMessage))
       .build();
-
-     
 }
 
 //

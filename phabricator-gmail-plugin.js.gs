@@ -1,3 +1,4 @@
+var COMMENT_INPUT_FORM_KEY = "comment_input_key";
 
 /**
  * Returns the array of cards that should be rendered for the current
@@ -69,10 +70,38 @@ function buildTaskCard(taskId) {
   section.addWidget(CardService.newTextParagraph()
                        .setText(linkHtml));
 
+  var commentTextInput = CardService.newTextInput()
+      .setFieldName(COMMENT_INPUT_FORM_KEY)
+      .setTitle("Add Comment")
+      .setHint("Comment to add")
+      .setMultiline(true);
+  
+  section.addWidget(commentTextInput);
+
+  var submitButton = CardService.newTextButton()
+     .setText("Submit")
+     .setOnClickAction(CardService.newAction()
+                       .setFunctionName("handleSubmitClicked"));
+  
+  section.addWidget(submitButton);
+  
   card.addSection(section);
   return card.build();
 }
 
 function createLinkToTask(taskId, title) {
    return "<a href='" + getPhabBaseUrl() + "/" + taskId + "'>" + title + "</a>";
+}
+
+//
+// Event handling
+//
+
+function handleSubmitClicked(event) {
+  
+  var comment = event.formInput[COMMENT_INPUT_FORM_KEY];
+  if (! comment || len(comment) == 0)
+      return buildError("Comment field is empty!");
+  
+  // submit a comment
 }
