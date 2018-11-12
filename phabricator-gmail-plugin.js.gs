@@ -60,12 +60,16 @@ function buildAddOn(e) {
  *  @return {Card} a card that displays thread information.
  */
 function buildTaskCard(taskId) {
+  var taskInfo = getTaskInfo(taskId.slice(1));
+  
   var card = CardService.newCardBuilder();
-  card.setHeader(CardService.newCardHeader().setTitle(taskId));
+  var headerText = taskId + " (" + taskInfo.statusName + ")";
+  card.setHeader(CardService.newCardHeader().setTitle(headerText));
 
   var section = CardService.newCardSection();
   
-  var linkText = getTaskInfo(taskId.slice(1));
+
+  var linkText = taskInfo.title;
   var linkHtml = createLinkToTask(taskId, linkText);
   section.addWidget(CardService.newTextParagraph()
                        .setText(linkHtml));
@@ -81,7 +85,8 @@ function buildTaskCard(taskId) {
   var submitButton = CardService.newTextButton()
      .setText("Submit")
      .setOnClickAction(CardService.newAction()
-                       .setFunctionName("handleSubmitClicked"));
+                       .setFunctionName("handleSubmitClicked")
+                       .setParameters({"taskId": taskId}));
   
   section.addWidget(submitButton);
   
@@ -100,8 +105,9 @@ function createLinkToTask(taskId, title) {
 function handleSubmitClicked(event) {
   
   var comment = event.formInput[COMMENT_INPUT_FORM_KEY];
-  if (! comment || len(comment) == 0)
+  if (! comment || comment.length == 0)
       return buildError("Comment field is empty!");
-  
+                                     
   // submit a comment
+  postComment(event.parameters["taskId"], comment);
 }
