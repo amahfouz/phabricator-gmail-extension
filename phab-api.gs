@@ -17,7 +17,6 @@ function testConnection() {
  */
 function getTaskInfo(taskId) { 
   var formData = {        
-    'api.token': PropertiesService.getScriptProperties().getProperty(ACCESS_TOKEN_PROPERTY_KEY),
     'task_id'  : taskId
   }
   var json = doPost('maniphest.info', formData);
@@ -29,9 +28,8 @@ function getTaskInfo(taskId) {
  */
 function postComment(taskId, commentText) {
   var formData = {
-    'api.token': PropertiesService.getScriptProperties().getProperty(ACCESS_TOKEN_PROPERTY_KEY),
-    'transactions' : [ { 'type':'comment','value': commentText } ],
-    'objectIdentifier' : taskId
+    'objectIdentifier' : taskId,
+    'transactions' : [ { 'type' : 'comment', 'value' : 'Gmail' } ]
   };
 
   doPost('maniphest.edit', JSON.stringify(formData));
@@ -48,19 +46,29 @@ function doPost(relativeUrl, formData) {
      .getProperty(PHAB_URL_PROPERTY_KEY);
   var url = base + '/api/' + relativeUrl;
 
+  // add the api token to the form fields
   //formData['api.token'] = token;
   
   var options = {
     'method' : 'post',
-    'muteHttpExceptions' : true,
-    'payload' : formData
+    'payload' : formData,
   };  
   
   var request = UrlFetchApp.getRequest(url, options);
-  for (i in request)
-     Logger.log(i + ": " + request[i]);
+  for (i in request) {
+    Logger.log(i + ": " + request[i]);
+    if (i == "headers") {
+      headers = request[i];
+      for (h in headers) {
+        Logger.log("Header " + h + ":" + headers[h]);
+      }
+    }
+  }
+
+  var temp = UrlFetchApp.fetch("http://httpbin.org/post", options);
+  Logger.log(temp.getContentText());
   
   var response = UrlFetchApp.fetch(url, options);
-  Logger.log(response.getContentText());
+    
   return JSON.parse(response.getContentText());
 }
