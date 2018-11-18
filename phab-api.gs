@@ -28,11 +28,12 @@ function getTaskInfo(taskId) {
  */
 function postComment(taskId, commentText) {
   var formData = {
-    'objectIdentifier' : taskId,
-    'transactions' : [ { 'type' : 'comment', 'value' : 'Gmail' } ]
+    "objectIdentifier" : taskId,        
+    'transactions[0][type]' : 'comment',
+    'transactions[0][value]' : 'from Gmail'    
   };
 
-  doPost('maniphest.edit', JSON.stringify(formData));
+  doPost('maniphest.edit', formData);
 }
 
 //
@@ -47,10 +48,12 @@ function doPost(relativeUrl, formData) {
   var url = base + '/api/' + relativeUrl;
 
   // add the api token to the form fields
-  //formData['api.token'] = token;
+
+  formData["api.token"] = token;
   
   var options = {
     'method' : 'post',
+    'contentType': 'application/x-www-form-urlencoded',
     'payload' : formData,
   };  
   
