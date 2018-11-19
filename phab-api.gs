@@ -30,7 +30,7 @@ function postComment(taskId, commentText) {
   var formData = {
     "objectIdentifier" : taskId,        
     'transactions[0][type]' : 'comment',
-    'transactions[0][value]' : 'from Gmail'    
+    'transactions[0][value]' : commentText   
   };
 
   doPost('maniphest.edit', formData);
@@ -57,21 +57,11 @@ function doPost(relativeUrl, formData) {
     'payload' : formData,
   };  
   
-  var request = UrlFetchApp.getRequest(url, options);
-  for (i in request) {
-    Logger.log(i + ": " + request[i]);
-    if (i == "headers") {
-      headers = request[i];
-      for (h in headers) {
-        Logger.log("Header " + h + ":" + headers[h]);
-      }
-    }
-  }
-
-  var temp = UrlFetchApp.fetch("http://httpbin.org/post", options);
-  Logger.log(temp.getContentText());
+//  var request = UrlFetchApp.getRequest(url, options);
   
   var response = UrlFetchApp.fetch(url, options);
+  if (response.getResponseCode() != 200)
+    throw "Failed to post comment. " + response.getContentText();
     
   return JSON.parse(response.getContentText());
 }

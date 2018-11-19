@@ -109,5 +109,11 @@ function handleSubmitClicked(event) {
       return buildError("Comment field is empty!");
                                      
   // submit a comment
-  postComment(event.parameters["taskId"], comment);
+  try {
+     postComment(event.parameters["taskId"], comment);
+     return buildInfo("Comment submitted successfully.");
+  }
+  catch (err) {
+     return buildError(err);
+  }
 }

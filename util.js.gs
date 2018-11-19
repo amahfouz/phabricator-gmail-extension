@@ -3,17 +3,21 @@
 // 
 
 function buildError(message) {
-  return CardService.newActionResponseBuilder()
-      .setNotification(CardService.newNotification()
-          .setType(CardService.NotificationType.ERROR)
-          .setText(message))
-      .build();    
+  return buildMessage(message, CardService.NotificationType.ERROR);    
 }
 
 function buildWarning(message) {
+  return buildMessage(message, CardService.NotificationType.WARN);
+}
+
+function buildInfo(message) {
+  return buildMessage(message, CardService.NotificationType.INFO);
+}
+
+function buildMessage(message, severity) {
   return CardService.newActionResponseBuilder()
       .setNotification(CardService.newNotification()
-          .setType(CardService.NotificationType.WARN)
+          .setType(severity)
           .setText(message))
       .build();    
 }
