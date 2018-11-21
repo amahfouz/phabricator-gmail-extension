@@ -44,11 +44,12 @@ function buildAddOn(e) {
            tasks.push(item);
        }
     });
-  
-    var cards = []
     
+    var includeTaskTitleInCardTitle = tasks.length > 1;
+ 
+    var cards = [];
     tasks.forEach(function(taskId) {
-      cards.push(buildTaskCard(taskId));
+      cards.push(buildTaskCard(taskId, includeTaskTitleInCardTitle));
     });
     return cards;
 }
@@ -59,16 +60,18 @@ function buildAddOn(e) {
  *  @param {String} taskId task ID in the form of Tnnnn
  *  @return {Card} a card that displays thread information.
  */
-function buildTaskCard(taskId) {
+function buildTaskCard(taskId, includeTitleInCardTitle) {
   var taskInfo = getTaskInfo(taskId.slice(1));
   
   var card = CardService.newCardBuilder();
-  var headerText = taskId + " (" + taskInfo.statusName + ")";
+  var titleSuffix = includeTitleInCardTitle 
+      ? "- " + taskInfo.title 
+      : "(" + taskInfo.statusName + ")";
+  var headerText = taskId + " " + titleSuffix;
   card.setHeader(CardService.newCardHeader().setTitle(headerText));
 
   var section = CardService.newCardSection();
   
-
   var linkText = taskInfo.title;
   var linkHtml = createLinkToTask(taskId, linkText);
   section.addWidget(CardService.newTextParagraph()
