@@ -29,8 +29,13 @@ function buildAddOn(e) {
     var sender = message.getFrom();
   
     var body = message.getBody();
-    var allTasks = body.match(/T\d\d\d+/g);
+    var taskIdPattern = /T\d\d\d+/g;
+  
+    var allBodyTasks = body.match(taskIdPattern);      
+    var allSubjectTasks = subject.match(taskIdPattern);
 
+    var allTasks = allBodyTasks.concat(allSubjectTasks);
+  
     Logger.log(allTasks);
    
     // check if there are any Phabricator task references
