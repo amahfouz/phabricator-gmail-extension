@@ -1,5 +1,8 @@
 // Card showing summary of Phabricator task info
 
+var SHOW_MORE_BUTTON_TEXT = "Show More";
+var COMMENT_BUTTON_TEXT = "Comment";
+
 // taskId is in the form of Tnnnn
 function TaskCard(taskId, hasLongTitle) {
   this.taskId = taskId;
@@ -28,12 +31,12 @@ TaskCard.prototype.build = function() {
                        .setText(linkHtml));
 
   var buttonSet = CardService.newButtonSet();
-  var commentButton = CardService.newTextButton()
-     .setText("Comment")
-     .setOnClickAction(CardService.newAction()
-                       .setFunctionName("handleCommentClicked")
-                       .setParameters({"taskId": this.taskId}));
+  
+  var commentButton = createButton(this.taskId, COMMENT_BUTTON_TEXT);
+  var detailsButton = createButton(this.taskId, SHOW_MORE_BUTTON_TEXT);
+        
   buttonSet.addButton(commentButton);
+  buttonSet.addButton(detailsButton);  
   
   section.addWidget(buttonSet);
   
@@ -45,11 +48,29 @@ TaskCard.prototype.build = function() {
 // Event handling
 //
 
-function handleCommentClicked(event) {
-  var taskId = event.parameters["taskId"];
-  var commentCard = new CommentCard(taskId);
+function createButton(taskId, buttonText) {
+  return CardService.newTextButton()
+     .setText(buttonText)
+     .setOnClickAction(CardService.newAction()
+                       .setFunctionName("handleButtonClicked")
+                       .setParameters({"taskId": taskId, 
+                                       "buttonText": buttonText }));  
+}
 
-  var nav = CardService.newNavigation().pushCard(commentCard.build());
+function handleButtonClicked(event) {
+  var taskId = event.parameters["taskId"];
+  var buttonText = event.parameters["buttonText"];
+  
+  var cardToPush = (buttonText == COMMENT_BUTTON_TEXT)
+      ? new CommentCard(taskId)
+      : (buttonText == SHOW_MORE_BUTTON_TEXT)
+          ? new DetailsCard(taskId)
+          : null;
+  
+  if (cardToPush == null)
+     return buildWarning("Unexpected action!");
+
+  var nav = CardService.newNavigation().pushCard(cardToPush.build());
   return CardService.newActionResponseBuilder()
       .setNavigation(nav)
       .build();  
