@@ -1,3 +1,5 @@
+// Entry point
+
 /**
  * Returns the array of cards that should be rendered for the current
  * e-mail thread. The name of this function is specified in the
@@ -23,8 +25,25 @@ function buildAddOn(e) {
 
     var messageId = e.messageMetadata.messageId;
     var message = GmailApp.getMessageById(messageId);
+    
+    var tasks = findTaskRefs(message);
+  
+    var includeTaskTitleInCardTitle = tasks.length > 1;
+ 
+    var cards = [];
+    tasks.forEach(function(taskId) {
+      var taskCard = new TaskCard(taskId, includeTaskTitleInCardTitle);
+      cards.push(taskCard.build());
+    });
+    return cards;
+}
+
+//
+// Matches task IDs in the email subject and body 
+//
+
+function findTaskRefs(message) {
     var subject = message.getSubject();
-    var sender = message.getFrom();
   
     Logger.log(subject);
   
@@ -47,73 +66,12 @@ function buildAddOn(e) {
       return [];
   
     // remove duplicates
-    var tasks = [];
+    var tasksNoDup = [];
     allTasks.forEach(function(item) {
-       if (tasks.indexOf(item) < 0) {
-           tasks.push(item);
+       if (tasksNoDup.indexOf(item) < 0) {
+           tasksNoDup.push(item);
        }
     });
-    
-    var includeTaskTitleInCardTitle = tasks.length > 1;
- 
-    var cards = [];
-    tasks.forEach(function(taskId) {
-      cards.push(buildTaskCard(taskId, includeTaskTitleInCardTitle));
-    });
-    return cards;
-}
-
-/**
- *  Builds a card to display information about a Phabricator task.
- *
- *  @param {String} taskId task ID in the form of Tnnnn
- *  @return {Card} a card that displays thread information.
- */
-function buildTaskCard(taskId, includeTitleInCardTitle) {
-  var taskInfo = getTaskInfo(taskId.slice(1));
-  
-  var card = CardService.newCardBuilder();
-  var titleSuffix = includeTitleInCardTitle 
-      ? "- " + taskInfo.title 
-      : "(" + taskInfo.statusName + ")";
-  var headerText = taskId + " " + titleSuffix;
-  card.setHeader(CardService.newCardHeader().setTitle(headerText));
-
-  var section = CardService.newCardSection();
-  
-  var linkText = taskInfo.title;
-  var linkHtml = createLinkToTask(taskId, linkText);
-  section.addWidget(CardService.newTextParagraph()
-                       .setText(linkHtml));
-
-  var buttonSet = CardService.newButtonSet();
-  var commentButton = CardService.newTextButton()
-     .setText("Comment")
-     .setOnClickAction(CardService.newAction()
-                       .setFunctionName("handleCommentClicked")
-                       .setParameters({"taskId": taskId}));
-  buttonSet.addButton(commentButton);
-  
-  section.addWidget(buttonSet);
-  
-  card.addSection(section);
-  return card.build();
-}
-
-function createLinkToTask(taskId, title) {
-   return "<a href='" + getPhabBaseUrl() + "/" + taskId + "'>" + title + "</a>";
-}
-
-//
-// Event handling
-//
-
-function handleCommentClicked(event) {
-  var taskId = event.parameters["taskId"];
-  var commentCard = new CommentCard(taskId);
-
-  var nav = CardService.newNavigation().pushCard(commentCard.build());
-  return CardService.newActionResponseBuilder()
-      .setNavigation(nav)
-      .build();  
+   
+    return tasksNoDup;
 }
