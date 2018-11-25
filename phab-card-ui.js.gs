@@ -1,5 +1,3 @@
-var COMMENT_INPUT_FORM_KEY = "comment_input_key";
-
 /**
  * Returns the array of cards that should be rendered for the current
  * e-mail thread. The name of this function is specified in the
@@ -28,18 +26,24 @@ function buildAddOn(e) {
     var subject = message.getSubject();
     var sender = message.getFrom();
   
+    Logger.log(subject);
+  
     var body = message.getBody();
     var taskIdPattern = /T\d\d\d+/g;
   
     var allBodyTasks = body.match(taskIdPattern);      
     var allSubjectTasks = subject.match(taskIdPattern);
 
-    var allTasks = allBodyTasks.concat(allSubjectTasks);
+    var allTasks = [];
+    if (allBodyTasks)
+       allTasks = allTasks.concat(allBodyTasks);
+    if (allSubjectTasks)
+       allTasks = allTasks.concat(allSubjectTasks);
   
     Logger.log(allTasks);
    
     // check if there are any Phabricator task references
-    if (allTasks ==null || allTasks.length == 0)
+    if (allTasks == null || allTasks.length == 0)
       return [];
   
     // remove duplicates
@@ -82,21 +86,15 @@ function buildTaskCard(taskId, includeTitleInCardTitle) {
   section.addWidget(CardService.newTextParagraph()
                        .setText(linkHtml));
 
-  var commentTextInput = CardService.newTextInput()
-      .setFieldName(COMMENT_INPUT_FORM_KEY)
-      .setTitle("Add Comment")
-      .setHint("Comment to add")
-      .setMultiline(true);
-  
-  section.addWidget(commentTextInput);
-
-  var submitButton = CardService.newTextButton()
-     .setText("Submit")
+  var buttonSet = CardService.newButtonSet();
+  var commentButton = CardService.newTextButton()
+     .setText("Comment")
      .setOnClickAction(CardService.newAction()
-                       .setFunctionName("handleSubmitClicked")
+                       .setFunctionName("handleCommentClicked")
                        .setParameters({"taskId": taskId}));
+  buttonSet.addButton(commentButton);
   
-  section.addWidget(submitButton);
+  section.addWidget(buttonSet);
   
   card.addSection(section);
   return card.build();
@@ -110,18 +108,12 @@ function createLinkToTask(taskId, title) {
 // Event handling
 //
 
-function handleSubmitClicked(event) {
-  
-  var comment = event.formInput[COMMENT_INPUT_FORM_KEY];
-  if (! comment || comment.length == 0)
-      return buildError("Comment field is empty!");
-                                     
-  // submit a comment
-  try {
-     postComment(event.parameters["taskId"], comment);
-     return buildInfo("Comment submitted successfully.");
-  }
-  catch (err) {
-     return buildError(err);
-  }
+function handleCommentClicked(event) {
+  var taskId = event.parameters["taskId"];
+  var commentCard = new CommentCard(taskId);
+
+  var nav = CardService.newNavigation().pushCard(commentCard.build());
+  return CardService.newActionResponseBuilder()
+      .setNavigation(nav)
+      .build();  
 }
