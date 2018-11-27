@@ -27,8 +27,7 @@ TaskCard.prototype.build = function() {
   var linkText = taskInfo.title;
   var linkHtml = "<a href='" + getPhabBaseUrl() + "/" + this.taskId + "'>" + taskInfo.title + "</a>";
   
-  section.addWidget(CardService.newTextParagraph()
-                       .setText(linkHtml));
+  section.addWidget(CardService.newTextParagraph().setText(linkHtml));
 
   var buttonSet = CardService.newButtonSet();
   
@@ -54,7 +53,7 @@ function createButton(taskId, buttonText) {
      .setOnClickAction(CardService.newAction()
                        .setFunctionName("handleButtonClicked")
                        .setParameters({"taskId": taskId, 
-                                       "buttonText": buttonText }));  
+                                       "buttonText": buttonText })); 
 }
 
 function handleButtonClicked(event) {

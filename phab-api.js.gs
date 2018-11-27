@@ -19,8 +19,7 @@ function getTaskInfo(taskId) {
   var formData = {        
     'task_id'  : taskId
   }
-  var json = doPost('maniphest.info', formData);
-  return json.result;
+  return doPost('maniphest.info', formData).result;
 }
 
 /**
@@ -34,6 +33,16 @@ function postComment(taskId, commentText) {
   };
 
   doPost('maniphest.edit', formData);
+}
+
+function getProjects(projectIds) {
+  var formData = {
+  }
+  for (i = 0; i < projectIds.length; i++) {
+    var key = "phids[" + i +"]";
+    formData[key] = projectIds[i];
+  }
+  return doPost('project.query', formData).result;
 }
 
 //
