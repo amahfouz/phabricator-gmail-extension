@@ -30,6 +30,11 @@ DetailsCard.prototype.build = function() {
 
   var section = CardService.newCardSection();
   
+  var title = CardService.newKeyValue()
+     .setTopLabel("Title")
+     .setContent(this.taskInfo.title);
+  section.addWidget(title);
+  
   var author = CardService.newKeyValue()
      .setTopLabel("Author")
      .setContent("dd@webalo.com");
