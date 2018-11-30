@@ -18,7 +18,13 @@ DetailsCard.prototype.getProjectsAsStr = function() {
   }
   var projectNameString = "";
   for (i = 0; i < projectNames.length; i++) {
-    projectNameString += projectNames[i] + " ";
+    projectNameString = projectNameString 
+      + "<font color='" 
+      +  colorNameToHex(projects.data[projectIds[i]]["color"]) 
+      + "'>"
+      + projectNames[i] 
+      + "</font>"
+      + "<br>";
   }
   return projectNameString;
 }
@@ -43,7 +49,8 @@ DetailsCard.prototype.build = function() {
   
   var projects = CardService.newKeyValue()
      .setTopLabel("Projects")
-     .setContent(this.getProjectsAsStr());
+     .setContent(this.getProjectsAsStr())
+     .setMultiline(true);
   section.addWidget(projects);
   
   card.addSection(section);

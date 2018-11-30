@@ -32,14 +32,21 @@ TaskCard.prototype.build = function() {
   
   var priority = taskInfo.priority;
   var lastModified = taskInfo.dateModified;
+  var dateCreated = taskInfo.dateCreated;
   
   section.addWidget(CardService.newKeyValue()
                       .setTopLabel("Priority")
                       .setContent(priority));
 
   section.addWidget(CardService.newKeyValue()
+                      .setTopLabel("Created")
+                      .setContent(formatDate(this.event, dateCreated)));  
+  
+  section.addWidget(CardService.newKeyValue()
                       .setTopLabel("Last Update")
                       .setContent(formatDate(this.event, lastModified)));  
+  
+  var buttonSection = CardService.newCardSection();
   
   var buttonSet = CardService.newButtonSet();
   
@@ -49,9 +56,11 @@ TaskCard.prototype.build = function() {
   buttonSet.addButton(commentButton);
   buttonSet.addButton(detailsButton);  
   
-  section.addWidget(buttonSet);
+  buttonSection.addWidget(buttonSet);
   
-  card.addSection(section);
+  card.addSection(section);    
+  card.addSection(buttonSection);
+  
   return card.build();
 }
 
