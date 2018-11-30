@@ -37,18 +37,32 @@ DetailsCard.prototype.build = function() {
   var headerText = this.taskId + " details";
   card.setHeader(CardService.newCardHeader().setTitle(headerText));
 
-  var section = CardService.newCardSection();
+  var titleSection = CardService.newCardSection();
   
   var title = CardService.newKeyValue()
      .setTopLabel("Title")
      .setContent(this.taskInfo.title)
      .setMultiline(true);
-  section.addWidget(title);
+  titleSection.addWidget(title);
+  
+  var section = CardService.newCardSection();
+  
+  var emailAction = CardService
+     .newAction()
+        .setFunctionName('composeEmailCallback')
+        .setParameters({"to": this.owner.name, 
+                        "taskId": this.taskId});
+  var emailOwnerButton = CardService
+     .newTextButton()
+       .setText("Email")
+       .setComposeAction(emailAction, 
+                         CardService.ComposedEmailType.STANDALONE_DRAFT);
   
   var author = CardService.newKeyValue()
      .setTopLabel("Owner")
      .setContent(this.owner.fullName)
-     .setIcon(CardService.Icon.PERSON);
+     .setIcon(CardService.Icon.PERSON)
+     .setButton(emailOwnerButton);
   section.addWidget(author);
   
   var projects = CardService.newKeyValue()
@@ -57,7 +71,21 @@ DetailsCard.prototype.build = function() {
      .setMultiline(true)
      .setIcon(CardService.Icon.BOOKMARK);
   section.addWidget(projects);
-  
+
+  card.addSection(titleSection);  
   card.addSection(section);
   return card.build();  
+}
+
+//
+// Event handling
+//
+
+function composeEmailCallback(event) {
+  var recipient = event.parameters["to"] + "@webalo.com";
+  var subject = "Regarding " + event.parameters["taskId"];
+  var draft = GmailApp.createDraft(recipient, subject, "");
+  return CardService.newComposeActionResponseBuilder()
+      .setGmailDraft(draft)
+      .build();
 }
