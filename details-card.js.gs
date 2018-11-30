@@ -32,7 +32,8 @@ DetailsCard.prototype.build = function() {
   
   var title = CardService.newKeyValue()
      .setTopLabel("Title")
-     .setContent(this.taskInfo.title);
+     .setContent(this.taskInfo.title)
+     .setMultiline(true);
   section.addWidget(title);
   
   var author = CardService.newKeyValue()

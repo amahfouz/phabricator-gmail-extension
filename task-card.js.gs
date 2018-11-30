@@ -4,9 +4,10 @@ var SHOW_MORE_BUTTON_TEXT = "Show More";
 var COMMENT_BUTTON_TEXT = "Comment";
 
 // taskId is in the form of Tnnnn
-function TaskCard(taskId, hasLongTitle) {
+function TaskCard(taskId, hasLongTitle, event) {
   this.taskId = taskId;
   this.hasLongTitle = hasLongTitle;
+  this.event = event;
 }
 
 /**
@@ -28,7 +29,18 @@ TaskCard.prototype.build = function() {
   var linkHtml = "<a href='" + getPhabBaseUrl() + "/" + this.taskId + "'>" + taskInfo.title + "</a>";
   
   section.addWidget(CardService.newTextParagraph().setText(linkHtml));
+  
+  var priority = taskInfo.priority;
+  var lastModified = taskInfo.dateModified;
+  
+  section.addWidget(CardService.newKeyValue()
+                      .setTopLabel("Priority")
+                      .setContent(priority));
 
+  section.addWidget(CardService.newKeyValue()
+                      .setTopLabel("Last Update")
+                      .setContent(formatDate(this.event, lastModified)));  
+  
   var buttonSet = CardService.newButtonSet();
   
   var commentButton = createButton(this.taskId, COMMENT_BUTTON_TEXT);

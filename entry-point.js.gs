@@ -9,7 +9,7 @@
  * @param {Object} e data provided by the Gmail UI.
  * @return {Card[]}
  */
-function buildAddOn(e) {
+function buildAddOn(event) {
   
     Logger.log("Add-on invoked.");
   
@@ -20,10 +20,10 @@ function buildAddOn(e) {
     }
   
     // message metadata to be read.
-    var accessToken = e.messageMetadata.accessToken;
+    var accessToken = event.messageMetadata.accessToken;
     GmailApp.setCurrentMessageAccessToken(accessToken);
 
-    var messageId = e.messageMetadata.messageId;
+    var messageId = event.messageMetadata.messageId;
     var message = GmailApp.getMessageById(messageId);
     
     var tasks = findTaskRefs(message);
@@ -32,7 +32,7 @@ function buildAddOn(e) {
  
     var cards = [];
     tasks.forEach(function(taskId) {
-      var taskCard = new TaskCard(taskId, includeTaskTitleInCardTitle);
+      var taskCard = new TaskCard(taskId, includeTaskTitleInCardTitle, event);
       cards.push(taskCard.build());
     });
     return cards;
