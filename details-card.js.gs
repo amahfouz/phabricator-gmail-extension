@@ -4,6 +4,9 @@
 function DetailsCard(taskId) {
   this.taskId = taskId;     
   this.taskInfo = getTaskInfo(this.taskId.slice(1));  
+  this.owner = getPerson(this.taskInfo.ownerPHID);
+  
+  Logger.log(this.owner);
 }
 
 DetailsCard.prototype.getProjectsAsStr = function() {
@@ -43,14 +46,16 @@ DetailsCard.prototype.build = function() {
   section.addWidget(title);
   
   var author = CardService.newKeyValue()
-     .setTopLabel("Author")
-     .setContent("dd@webalo.com");
+     .setTopLabel("Owner")
+     .setContent(this.owner.fullName)
+     .setIcon(CardService.Icon.PERSON);
   section.addWidget(author);
   
   var projects = CardService.newKeyValue()
      .setTopLabel("Projects")
      .setContent(this.getProjectsAsStr())
-     .setMultiline(true);
+     .setMultiline(true)
+     .setIcon(CardService.Icon.BOOKMARK);
   section.addWidget(projects);
   
   card.addSection(section);

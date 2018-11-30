@@ -17,7 +17,10 @@ CommentCard.prototype.build = function() {
   var card = CardService.newCardBuilder();
 
   var headerText = "Add comment to " + this.taskId;
-  card.setHeader(CardService.newCardHeader().setTitle(headerText));
+  var header = CardService.newCardHeader().setTitle(headerText);
+  header.setImageUrl("https://www.gstatic.com/images/icons/material/system/2x/comment_black_24dp.png")
+  header.setImageStyle(CardService.ImageStyle.SQUARE)
+  card.setHeader(header);
   
   var section = CardService.newCardSection();
   section.addWidget(this.commentTextInput);

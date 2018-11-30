@@ -13,6 +13,17 @@ function testConnection() {
 }
 
 /**
+ * Returns info about the specified object by its PHAB ID.
+ */
+function getPerson(phabId) {
+  var formData = {
+    "phids[0]" : phabId
+  }
+
+  return doPost('phid.query', formData).result[phabId];
+}
+
+/**
  * Queries Phabricator for the specified task.
  */
 function getTaskInfo(taskId) { 
