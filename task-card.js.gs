@@ -21,7 +21,9 @@ TaskCard.prototype.build = function() {
       ? "- " + taskInfo.title 
       : "(" + taskInfo.statusName + ")";
   var headerText = this.taskId + " " + titleSuffix;
-  card.setHeader(CardService.newCardHeader().setTitle(headerText));
+  var header = CardService.newCardHeader().setTitle(headerText);
+  header.setImageUrl("https://www.gstatic.com/images/icons/material/system/2x/offline_bolt_black_24dp.png")    
+  card.setHeader(header);
 
   var section = CardService.newCardSection();
   

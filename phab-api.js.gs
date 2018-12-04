@@ -61,10 +61,8 @@ function getProjects(projectIds) {
 //
 
 function doPost(relativeUrl, formData) {
-  var token = PropertiesService.getScriptProperties()
-     .getProperty(ACCESS_TOKEN_PROPERTY_KEY);
-  var base = PropertiesService.getScriptProperties()
-     .getProperty(PHAB_URL_PROPERTY_KEY);
+  var token = getPhabApiToken();
+  var base = getPhabBaseUrl();
   var url = base + '/api/' + relativeUrl;
 
   // add the api token to the form fields

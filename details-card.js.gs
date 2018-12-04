@@ -5,8 +5,6 @@ function DetailsCard(taskId) {
   this.taskId = taskId;     
   this.taskInfo = getTaskInfo(this.taskId.slice(1));  
   this.owner = getPerson(this.taskInfo.ownerPHID);
-  
-  Logger.log(this.owner);
 }
 
 DetailsCard.prototype.getProjectsAsStr = function() {
@@ -35,7 +33,9 @@ DetailsCard.prototype.getProjectsAsStr = function() {
 DetailsCard.prototype.build = function() {
   var card = CardService.newCardBuilder();
   var headerText = this.taskId + " details";
-  card.setHeader(CardService.newCardHeader().setTitle(headerText));
+  var header = CardService.newCardHeader().setTitle(headerText);
+  header.setImageUrl("https://www.gstatic.com/images/icons/material/system/2x/list_alt_black_24dp.png")
+  card.setHeader(header);
 
   var titleSection = CardService.newCardSection();
   
@@ -46,23 +46,32 @@ DetailsCard.prototype.build = function() {
   titleSection.addWidget(title);
   
   var section = CardService.newCardSection();
-  
-  var emailAction = CardService
-     .newAction()
-        .setFunctionName('composeEmailCallback')
-        .setParameters({"to": this.owner.name, 
-                        "taskId": this.taskId});
-  var emailOwnerButton = CardService
-     .newTextButton()
+
+  var author;
+  if (this.owner) {  
+    var emailAction = CardService
+       .newAction()
+       .setFunctionName('composeEmailCallback')
+       .setParameters({"to": this.owner.name, 
+                       "taskId": this.taskId});
+    var emailOwnerButton = CardService
+       .newTextButton()
        .setText("Email")
        .setComposeAction(emailAction, 
                          CardService.ComposedEmailType.STANDALONE_DRAFT);
-  
-  var author = CardService.newKeyValue()
-     .setTopLabel("Owner")
-     .setContent(this.owner.fullName)
-     .setIcon(CardService.Icon.PERSON)
-     .setButton(emailOwnerButton);
+    
+    author = CardService.newKeyValue()
+       .setTopLabel("Assignee")
+       .setContent(this.owner.fullName)
+       .setIcon(CardService.Icon.PERSON)
+       .setButton(emailOwnerButton);
+  }
+  else
+    author = CardService.newKeyValue()
+       .setTopLabel("Assignee")
+       .setContent("NONE")
+       .setIcon(CardService.Icon.PERSON)
+      
   section.addWidget(author);
   
   var projects = CardService.newKeyValue()

@@ -8,7 +8,7 @@ var ACCESS_TOKEN_PROPERTY_KEY="access_token_key";
 function buildConnectionCard() {
   var card = CardService.newCardBuilder();
   var header = CardService.newCardHeader();
-
+  header.setImageUrl("https://www.gstatic.com/images/icons/material/system/2x/settings_black_24dp.png")
   card.setHeader(header.setTitle("Connect to Phabricator"));
 
   var section = CardService.newCardSection();
@@ -21,6 +21,10 @@ function buildConnectionCard() {
     .setFieldName(PHAB_URL_PROPERTY_KEY)
     .setTitle("Phabricator URL")
     .setHint("https://phabricator.example.com");  
+  
+  var curPhabUrl = getPhabBaseUrl();
+  if (curPhabUrl)
+    phabAddress.setValue(curPhabUrl);
 
   phabAddress.setOnChangeAction(CardService.newAction()
         .setFunctionName("handlePhabUrlChanged"));
@@ -31,6 +35,10 @@ function buildConnectionCard() {
     .setFieldName(ACCESS_TOKEN_PROPERTY_KEY)
     .setTitle("API Access Token")
     .setHint("api-fdlbq35nted63kbcxr2wq26bxfvo"); 
+  
+  var curTokenValue = getPhabApiToken();
+  if (curTokenValue)
+    accessToken.setValue(curTokenValue);
   
   accessToken.setOnChangeAction(CardService.newAction()
         .setFunctionName("handleAccessTokenChanged"));
@@ -56,6 +64,11 @@ function buildConnectionCard() {
 function getPhabBaseUrl() {
   return PropertiesService.getScriptProperties()
      .getProperty(PHAB_URL_PROPERTY_KEY);  
+}
+
+function getPhabApiToken() {
+  return PropertiesService.getScriptProperties()
+     .getProperty(ACCESS_TOKEN_PROPERTY_KEY);
 }
 
 //
