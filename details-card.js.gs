@@ -91,7 +91,11 @@ DetailsCard.prototype.build = function() {
 //
 
 function composeEmailCallback(event) {
-  var recipient = event.parameters["to"] + "@webalo.com";
+  var userEmailAddress = Session.getEffectiveUser().getEmail();
+  var indexOfAtSign = userEmailAddress.indexOf('@');
+  var emailDomain = userEmailAddress.slice(indexOfAtSign);
+  
+  var recipient = event.parameters["to"] + emailDomain;
   var subject = "Regarding " + event.parameters["taskId"];
   var draft = GmailApp.createDraft(recipient, subject, "");
   return CardService.newComposeActionResponseBuilder()

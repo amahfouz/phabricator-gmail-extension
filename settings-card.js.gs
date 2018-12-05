@@ -17,6 +17,8 @@ function buildConnectionCard() {
        ("Enter <b>URL</b> for your Phabricator server and"
         + " the <b>API token</b> to use when talking to it"));
   
+  // Phabricator base URL
+  
   var phabAddress = CardService.newTextInput()
     .setFieldName(PHAB_URL_PROPERTY_KEY)
     .setTitle("Phabricator URL")
@@ -31,6 +33,8 @@ function buildConnectionCard() {
   
   section.addWidget(phabAddress);
   
+  // Phabricator API access token
+  
   var accessToken = CardService.newTextInput()
     .setFieldName(ACCESS_TOKEN_PROPERTY_KEY)
     .setTitle("API Access Token")
@@ -44,9 +48,9 @@ function buildConnectionCard() {
         .setFunctionName("handleAccessTokenChanged"));
   
   section.addWidget(accessToken);
-  
-  var errTextField = CardService.newTextParagraph();
-  
+
+  // Button  
+ 
   var testConnectionButton = CardService.newTextButton()
       .setText("Test Connection")
       .setOnClickAction(CardService.newAction()
@@ -54,8 +58,6 @@ function buildConnectionCard() {
   
   section.addWidget(CardService.newButtonSet()
                       .addButton(testConnectionButton));
-  
-  section.addWidget(errTextField);
   
   card.addSection(section);
   return card.build();

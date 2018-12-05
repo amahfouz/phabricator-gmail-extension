@@ -9,7 +9,7 @@ function formatDate(event, msecsUtc) {
   var locale = event.userLocale + "-" + event.userCountry; // e.g. "en-US"
   var timeZone = event.userTimezone.id; // e.g. "America/New_York"
   
-  return date.toLocaleString(locale, {"timeZone": timeZone} );
+  return Utilities.formatDate(date, timeZone, 'MMMM dd yyyy   hh:mm a');
 }
 
 function buildError(message) {

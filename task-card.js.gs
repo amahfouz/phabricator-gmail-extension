@@ -19,7 +19,7 @@ TaskCard.prototype.build = function() {
   var card = CardService.newCardBuilder();
   var titleSuffix = this.hasLongTitle 
       ? "- " + taskInfo.title 
-      : "(" + taskInfo.statusName + ")";
+      : "";
   var headerText = this.taskId + " " + titleSuffix;
   var header = CardService.newCardHeader().setTitle(headerText);
   header.setImageUrl("https://www.gstatic.com/images/icons/material/system/2x/offline_bolt_black_24dp.png")    
@@ -33,8 +33,13 @@ TaskCard.prototype.build = function() {
   section.addWidget(CardService.newTextParagraph().setText(linkHtml));
   
   var priority = taskInfo.priority;
+  var status = taskInfo.statusName;
   var lastModified = taskInfo.dateModified;
   var dateCreated = taskInfo.dateCreated;
+
+  section.addWidget(CardService.newKeyValue()
+                      .setTopLabel("Status")
+                      .setContent(status));
   
   section.addWidget(CardService.newKeyValue()
                       .setTopLabel("Priority")
