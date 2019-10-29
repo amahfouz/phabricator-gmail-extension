@@ -1,3 +1,15 @@
+//
+// To enable the settings card, this needs to be 
+// added to the manifest
+//
+//    ,
+//    "universalActions": [{
+//      "text": "Setup connection",
+//      "runFunction": "setupConnectionUniversalHandler"
+//    }]
+//
+
+
 var PHAB_URL_PROPERTY_KEY="phab_url_key";
 var ACCESS_TOKEN_PROPERTY_KEY="access_token_key";
 

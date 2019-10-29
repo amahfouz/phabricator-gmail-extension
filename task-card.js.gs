@@ -17,6 +17,9 @@ TaskCard.prototype.build = function() {
   var taskInfo = getTaskInfo(this.taskId.slice(1));
   
   var card = CardService.newCardBuilder();
+  if (! taskInfo)
+     return card.build();
+  
   var titleSuffix = this.hasLongTitle 
       ? "- " + taskInfo.title 
       : "";
